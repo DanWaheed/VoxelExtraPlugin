@@ -1,0 +1,31 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "dev-1",
+	"FriendlyName": "Voxel Extra",
+	"Description": "Voxel Plugin 2.0 Addon",
+	"Category": "Landscape",
+	"CreatedBy": "BrownZFilmZ",
+	"CreatedByURL": "https://voxelplugin.com",
+	"DocsURL": "https://docs.voxelplugin.com",
+	"MarketplaceURL": "",
+	"SupportURL": "https://discord.voxelplugin.com",
+	"EngineVersion": "5.3.0",
+	"CanContainContent": true,
+	"Installed": true,
+	"Plugins": [
+		{
+			"Name": "Voxel",
+			"Enabled": true
+		}
+	],
+	"Modules": [
+		{
+			"Name": "VoxelExtraGraphCore",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
+		}
+	],
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false
+}

@@ -1,0 +1,128 @@
+﻿// Copyright Voxel Plugin, Inc. All Rights Reserved.
+
+#pragma once
+
+#include "VoxelMinimal.isph"
+
+// ReSharper disable CppCStyleCast
+// ReSharper disable CppVariableCanBeMadeConstexpr
+
+// Noise functions below are based off FastNoise2, whose license is below
+//
+// MIT License
+//
+// Copyright (c) 2020 Jordan Peck
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#define NoisePrimes_X ((uniform int32)501125321)
+#define NoisePrimes_Y ((uniform int32)1136930381)
+#define NoisePrimes_Z ((uniform int32)1720413743)
+
+#define NoisePrimes_int3 MakeInt3(NoisePrimes_X, NoisePrimes_Y, NoisePrimes_Z)
+
+FORCEINLINE int32 HashPrimesHB(int32 Seed, int32 A, int32 B, int32 C)
+{
+	int32 Hash = Seed;
+	Hash ^= (A ^ B ^ C);
+	Hash *= 0x27d4eb2d;
+	return Hash;
+}
+
+FORCEINLINE float3 GetCellularDirection3D(const int32 Seed, const int3 HashPosition, const int32 IndexX, const int32 IndexY, const int32 IndexZ)
+{
+	const int32 Hash = HashPrimesHB(
+		Seed,
+		HashPosition.x + IndexX * NoisePrimes_X,
+		HashPosition.y + IndexY * NoisePrimes_Y,
+		HashPosition.z + IndexZ * NoisePrimes_Z);
+
+	const int32 TenBits = (1 << 10) - 1;
+	return normalize(MakeFloat3(
+		((Hash >> 0) & TenBits) - TenBits / 2.0f,
+		((Hash >> 10) & TenBits) - TenBits / 2.0f,
+		((Hash >> 20) & TenBits) - TenBits / 2.0f
+	));
+}
+
+FORCEINLINE float GetTrueDistanceCellularNoise3D(const int32 Seed, const float3 Position, const float Jitter, varying float3* CellPosition)
+{
+    const float ScaledJitter = Jitter / 4.f;
+
+    float DistanceToCenter = 0.f;
+    float3 MinCenter;
+    int3 MinIndices;
+
+    const float3 Floor = floor(Position);
+    const float3 LocalPosition = Position - Floor;
+    const int3 HashPosition = MakeInt3(Floor) * NoisePrimes_int3;
+
+    UNROLL
+    for (uniform int32 IndexX = -1; IndexX < 2; IndexX++)
+    {
+        UNROLL
+        for (uniform int32 IndexY = -1; IndexY < 2; IndexY++)
+        {
+            UNROLL
+            for (uniform int32 IndexZ = -1; IndexZ < 2; IndexZ++)
+            {
+                const float3 Direction = GetCellularDirection3D(Seed, HashPosition, IndexX, IndexY, IndexZ);
+                const float3 Center = MakeFloat3(IndexX, IndexY, IndexZ) + ScaledJitter * Direction;
+                const float NewDistance = DistanceSquared(Center, LocalPosition);
+
+                if ((IndexX == -1 && IndexY == -1 && IndexZ == -1) || NewDistance < DistanceToCenter)
+                {
+                    DistanceToCenter = NewDistance;
+                    MinCenter = Center;
+                    MinIndices = MakeInt3(IndexX, IndexY, IndexZ);
+                }
+            }
+        }
+    }
+    
+    *CellPosition = Floor + MinCenter;
+
+    float DistanceToEdge = 1e9;
+
+    UNROLL
+    for (uniform int32 IndexX = -1; IndexX <= 2; IndexX++)
+    {
+        UNROLL
+        for (uniform int32 IndexY = -1; IndexY <= 2; IndexY++)
+        {
+            UNROLL
+            for (uniform int32 IndexZ = -1; IndexZ <= 2; IndexZ++)
+            {
+                if (MinIndices.x == IndexX &&
+                    MinIndices.y == IndexY &&
+                    MinIndices.z == IndexZ)
+                {
+                    continue;
+                }
+
+                const float3 Direction = GetCellularDirection3D(Seed, HashPosition, IndexX, IndexY, IndexZ);
+                const float3 Center = MakeFloat3(IndexX, IndexY, IndexZ) + ScaledJitter * Direction;
+
+                DistanceToEdge = min(DistanceToEdge, dot((MinCenter + Center) / 2.f - LocalPosition, normalize(Center - MinCenter)));
+            }
+        }
+    }
+
+    return sqrt(DistanceToEdge);
+}
