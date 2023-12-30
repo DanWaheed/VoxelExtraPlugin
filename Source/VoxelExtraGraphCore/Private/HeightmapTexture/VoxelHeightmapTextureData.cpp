@@ -126,6 +126,13 @@ TSharedPtr<const FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTex
 		}
 	}
 
+	if (PlatformData->PixelFormat == PF_G8 || PlatformData->PixelFormat == PF_B8G8R8A8)
+	{
+		TArray<uint16> ResultHeights = FVoxelHeightmapTextureData::ImproveBitDepth(ProcessedHeights);
+		TArray<uint16> BlurredHeights = FVoxelHeightmapTextureData::BoxBlur(ResultHeights, 50);
+		ProcessedHeights = BlurredHeights;
+	}
+
 	TextureData.Unlock();
 
 	// LINQ .All(x => x == 0) Equivalent

@@ -45,7 +45,9 @@ FVoxelHeightmapTexture UVoxelHeightmapTextureFunctionLibrary::MakeHeightmapFromT
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-int32 UVoxelHeightmapTextureFunctionLibrary::GetMinHeightFromHeightmapTexture(const FVoxelHeightmapTexture& TextureData) const
+float UVoxelHeightmapTextureFunctionLibrary::GetMinHeightFromHeightmapTexture(
+	const FVoxelHeightmapTexture& TextureData,
+	float ScaleZ) const
 {
 	if (TextureData.Data == nullptr)
 	{
@@ -53,14 +55,16 @@ int32 UVoxelHeightmapTextureFunctionLibrary::GetMinHeightFromHeightmapTexture(co
 		return {};
 	}
 
-	return TextureData.Data->Min;
+	return TextureData.Data->Min * ScaleZ;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-int32 UVoxelHeightmapTextureFunctionLibrary::GetMaxHeightFromHeightmapTexture(const FVoxelHeightmapTexture& TextureData) const
+float UVoxelHeightmapTextureFunctionLibrary::GetMaxHeightFromHeightmapTexture(
+	const FVoxelHeightmapTexture& TextureData,
+	float ScaleZ) const
 {
 	if (TextureData.Data == nullptr)
 	{
@@ -68,14 +72,16 @@ int32 UVoxelHeightmapTextureFunctionLibrary::GetMaxHeightFromHeightmapTexture(co
 		return {};
 	}
 
-	return TextureData.Data->Max;
+	return TextureData.Data->Max * ScaleZ;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-int32 UVoxelHeightmapTextureFunctionLibrary::GetWidthFromHeightmapTexture(const FVoxelHeightmapTexture& TextureData) const
+float UVoxelHeightmapTextureFunctionLibrary::GetWidthFromHeightmapTexture(
+	const FVoxelHeightmapTexture& TextureData,
+	float ScaleXY) const
 {
 	if (TextureData.Data == nullptr)
 	{
@@ -83,9 +89,8 @@ int32 UVoxelHeightmapTextureFunctionLibrary::GetWidthFromHeightmapTexture(const 
 		return {};
 	}
 
-	return TextureData.Data->SizeX;
+	return TextureData.Data->SizeX * (ScaleXY / 2)	;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

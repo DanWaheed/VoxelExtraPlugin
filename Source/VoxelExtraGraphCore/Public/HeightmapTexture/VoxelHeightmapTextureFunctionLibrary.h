@@ -61,13 +61,19 @@ public:
 	FVoxelHeightmapTexture MakeHeightmapFromTexture(const FVoxelHeightmapTextureObject& Texture) const;
 
 	UFUNCTION(Category = "Heightmap Texture")
-	int32 GetMinHeightFromHeightmapTexture(const FVoxelHeightmapTexture& TextureData) const;
+	float GetMinHeightFromHeightmapTexture(
+		const FVoxelHeightmapTexture& TextureData,
+		const float ScaleZ = 2.f) const;
 
 	UFUNCTION(Category = "Heightmap Texture")
-	int32 GetMaxHeightFromHeightmapTexture(const FVoxelHeightmapTexture& TextureData) const;
+	float GetMaxHeightFromHeightmapTexture(
+		const FVoxelHeightmapTexture& TextureData,
+		const float ScaleZ = 2.f) const;
 
 	UFUNCTION(Category = "Heightmap Texture")
-	int32 GetWidthFromHeightmapTexture(const FVoxelHeightmapTexture& TextureData) const;
+	float GetWidthFromHeightmapTexture(
+		const FVoxelHeightmapTexture& TextureData,
+		const float ScaleXY = 100.f) const;
 
 	// Will clamp position if outside of the heightmap bounds
 	// Heightmap is centered, ie position is between -Size/2 and Size/2
