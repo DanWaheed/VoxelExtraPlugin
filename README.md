@@ -9,7 +9,7 @@ Make sure to set these settings on your textures you want to load as a heightmap
 
 Additionally, if you want the best results make sure it's G16.
 
-I have a Box Blur for G8 to remove the banding which results do to the lower pixel depth.
+I have a Box Blur for G8 to remove the banding *which is due to the lower pixel depth*
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/18fac62b-fa2b-4f7c-955e-198ae42ec3a5)
 
