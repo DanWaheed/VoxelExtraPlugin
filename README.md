@@ -7,11 +7,17 @@ Make sure to set these settings on your textures
 
 ![lod](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/f1e8aead-754b-4369-a0d7-29343ac90baf)
 
-Additionally, if you want the best results make sure it's G16. I have a Box Blur for G8 to remove the banding which results do to the lower pixel depth.
+Additionally, if you want the best results make sure it's G16.
+
+I have a Box Blur for G8 to remove the banding which results do to the lower pixel depth.
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/18fac62b-fa2b-4f7c-955e-198ae42ec3a5)
 
-Here's an example of what an 8-bit (G8) texture would look like with the banding [pre Box Blur] (this is greatly reduced with the Box Blur I have on G8)
+Here's an example of what an 8-bit *(G8)* texture would look like with the banding
+
+*this is greatly reduced with the Box Blur I have on G8*
+
+8-bit, pre Box Blur
 
 <img width="1482" alt="bandy" src="https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/2eb8a04e-e8ee-4528-a65b-73e4c4785085">
 
