@@ -6,3 +6,4 @@ Current Nodes:
 - Get Width from Heightmap Texture
 - Sample Heightmap From Texture
 - Array Get from Buffered Index
+- 3D True Distance Noise
