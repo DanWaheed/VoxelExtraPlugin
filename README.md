@@ -1,4 +1,4 @@
-This plugin is designed to be used along side Voxel Plugin 2.0
+This plugin is designed to be used along with Voxel Plugin 2.0
 
 ## Sample Heightmap Brush
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/6858c6ca-d7da-4cec-82cf-cd01cc92bb45)
