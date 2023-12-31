@@ -1,7 +1,7 @@
 This plugin is designed to be used along with Voxel Plugin 2.0
 
 ## Notes
-Make sure to set these settings on your textures
+Make sure to set these settings on your textures you want to load as a heightmap
 
 ![compression](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/0b6c5b6d-7b95-44b0-8bec-0308fcd4ec9c)
 
