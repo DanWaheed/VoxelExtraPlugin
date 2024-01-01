@@ -19,9 +19,11 @@ Here's an example of what an 8-bit *(G8)* texture would look like with the bandi
 
 8-bit, pre Box Blur
 
-<img width="1482" alt="bandy" src="https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/2eb8a04e-e8ee-4528-a65b-73e4c4785085">
+![before](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/df460125-5882-400a-a0a9-1f4bc84800ac)
 
+8-bit, post Box Blur
 
+![after](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/e138bbb5-42bd-4035-b738-46cec6ef3306)
 
 ## Sample Heightmap Brush
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/6858c6ca-d7da-4cec-82cf-cd01cc92bb45)
