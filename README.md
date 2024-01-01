@@ -58,6 +58,10 @@ Array Get from Buffered Index
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/1cce12cb-3204-4d19-93ac-05509d8c83e5)
 
+Array Set from Uniform Index & Value
+
+![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/393e6601-25c7-403a-9a5d-5ea3810cbd39)
+
 ### Noise
 3D True Distance Noise
 
