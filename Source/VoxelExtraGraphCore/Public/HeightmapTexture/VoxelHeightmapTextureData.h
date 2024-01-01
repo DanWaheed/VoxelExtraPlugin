@@ -28,15 +28,22 @@ private:
 	static TArray<uint16> BoxBlur(const TArray<uint16>& InputArray, int32 Amount)
 	{
 		int32 ArraySize = InputArray.Num();
-		TArray<uint16> SmoothedArray;
+		TArray<int> SmoothedArray;
 		SmoothedArray.SetNumUninitialized(ArraySize);
 
 		ispc::VoxelBoxBlur(ArraySize, InputArray.GetData(), Amount, SmoothedArray.GetData());
 
-		return SmoothedArray;
+		TArray<uint16> ResultArray;
+		for (int IntArray : SmoothedArray)
+		{
+			uint16 Value = static_cast<uint16>(IntArray);
+			ResultArray.Add(Value);
+		}
+
+		return ResultArray;
 	}
 
-    static TArray<uint16> ImproveBitDepth(const TArray<uint16>& InputArray)
+    static TArray<uint16> ScaleData(const TArray<uint16>& InputArray, uint16 Scale)
     {
         TArray<uint16> Output;
         Output.SetNum(InputArray.Num());
@@ -44,7 +51,7 @@ private:
         for (int32 i = 0; i < InputArray.Num(); ++i)
         {
             uint16 PixelValue = InputArray[i];
-            Output[i] = PixelValue * 128;
+            Output[i] = PixelValue * Scale;
         }
 
         return Output;

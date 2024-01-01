@@ -2,7 +2,7 @@ export void VoxelBoxBlur(
     uniform int32 ArraySize,
     const uniform uint16 InputArray[],
     uniform int32 Amount,
-    uniform uint16 SmoothedArray[])
+    uniform int32 SmoothedArray[])
 {
     foreach (index = 0 ... ArraySize)
     {
@@ -30,6 +30,7 @@ export void VoxelBoxBlur(
                 sum += InputArray[index + i];
                 ++count;
             }
+
         }
 
         SmoothedArray[index] = sum / count;
