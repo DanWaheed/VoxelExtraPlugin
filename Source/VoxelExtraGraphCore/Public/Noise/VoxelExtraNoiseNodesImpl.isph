@@ -238,11 +238,9 @@ FORCEINLINE float VoxelExtraNoiseNodes_SimplexNoise2D(const int32 Seed, const fl
     const float x2 = x0 - 1.0f + 2.0f * G2;  // Offsets for last corner in (x, y) unskewed coords
     const float y2 = y0 - 1.0f + 2.0f * G2;
 
-    const int32 ii = i & 255;
-    const int32 jj = j & 255;
-    const int32 gi0 = VoxelExtraNoiseNodes_SimplexHash(Seed, ii, jj) & 255; // Use hash function for gradient indices
-    const int32 gi1 = VoxelExtraNoiseNodes_SimplexHash(Seed, ii + i1, jj + j1) & 255;
-    const int32 gi2 = VoxelExtraNoiseNodes_SimplexHash(Seed, ii + 1, jj + 1) & 255;
+    const int32 gi0 = VoxelExtraNoiseNodes_SimplexHash(Seed, i, j); // Use hash function for gradient indices
+    const int32 gi1 = VoxelExtraNoiseNodes_SimplexHash(Seed, i + i1, j + j1);
+    const int32 gi2 = VoxelExtraNoiseNodes_SimplexHash(Seed, i + 1, j + 1);
     
     // Calculate the contribution from each corner
     float n0, n1, n2;
@@ -289,6 +287,5 @@ FORCEINLINE float VoxelExtraNoiseNodes_SimplexFractal2D(const int32 Seed, const 
         frequency *= Lacunarity;
     }
 
-    // Normalize to [0, 1]
-    return 0.5f + 0.5f * noiseValue;
+    return noiseValue / 2.0f;
 }
