@@ -12,8 +12,8 @@ export void VoxelBoxBlur(
             continue;
         }
 
-        int sum = InputArray[index];
-        int count = 1;
+        int32 sum = InputArray[index];
+        int32 count = 1;
 
         // Box blur with skip logic
         for (int i = 1; i <= Amount; ++i)
