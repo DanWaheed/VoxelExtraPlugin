@@ -13,4 +13,5 @@ public class VoxelExtraGraphCore : ModuleRules_Voxel
 				"VoxelGraphCore"
             }
 		);
+    }
 }
