@@ -68,3 +68,16 @@ Array Set from Uniform Index & Value
 3D True Distance Noise
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/7ec67c8e-01eb-4086-aa7d-5457251d92ac)
+
+2D IQ Noise
+
+![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/950c1385-8bd9-44bf-a751-230736321054)
+
+2D Simplex Noise
+
+![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/0e108525-f162-48ed-b0e8-74f3ab2ede73)
+
+2D Simplex Noise Fractal
+
+![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/b3a2a8ec-2df0-42bb-ae56-64c14db41aa9)
+
