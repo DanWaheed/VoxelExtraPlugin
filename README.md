@@ -55,6 +55,15 @@ Sample Heightmap From Texture
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/d63d705e-3d27-4176-9343-ba868fc5637b)
 
+### Map
+Make MAP
+
+![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/98878f4c-0ee9-47bc-a1c5-29725d47fa30)
+
+MAP Get
+
+![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/85ee21f0-1be1-4ef8-a60a-cd0670e3e8c1)
+
 ### Arrays
 Array Get from Buffered Index
 
