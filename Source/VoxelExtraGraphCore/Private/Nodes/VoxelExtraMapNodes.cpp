@@ -240,11 +240,6 @@ FVoxelPinTypeSet FVoxelNode_MapGet::GetPromotionTypes(const FVoxelPin& Pin) cons
 
 void FVoxelNode_MapGet::PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType)
 {
-	if (Pin.Name == MapPin) 
-	{
-		return;
-	}
-
 	if (Pin.Name == KeyPin) 
 	{
 		GetPin(KeyPin).SetType(NewType.GetBufferType());
