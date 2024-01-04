@@ -2,6 +2,118 @@
 #include "VoxelBufferUtilities.h"
 #include "VoxelBufferBuilder.h"
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapKeys, Keys)
+{
+	const TValue<FVoxelMap> Map = GetNodeRuntime().Get<FVoxelMap>(MapPin, Query);
+	FVoxelPinType OutputPinType = GetNodeRuntime().GetPinData(KeysPin).Type.GetInnerType();
+
+	return VOXEL_ON_COMPLETE(Map, OutputPinType)
+	{
+		FVoxelPinType KeyMapPinType = Map->Keys[0].GetType();
+		if (OutputPinType != KeyMapPinType)
+		{
+			VOXEL_MESSAGE(Error, "{0}: Key Pin Type of {1} Map Key Type of {2}", this, OutputPinType.ToString(), KeyMapPinType.ToString());
+			return {};
+		}
+
+		const TSharedRef<FVoxelBufferBuilder> BufferBuilder = MakeVoxelShared<FVoxelBufferBuilder>(OutputPinType);
+		for (int32 Index = 0; Index < Map->Keys.Num(); Index++)
+		{
+			BufferBuilder->Add(Map->Keys[Index]);
+		}
+
+		return FVoxelRuntimePinValue::Make(BufferBuilder->MakeBuffer(), ReturnPinType);
+	};
+}
+
+#if WITH_EDITOR
+FVoxelPinTypeSet FVoxelNode_MapKeys::GetPromotionTypes(const FVoxelPin& Pin) const
+{
+	if (Pin.Name == KeysPin)
+	{
+		return FVoxelPinTypeSet::AllBufferArrays();
+	}
+	else
+	{
+		return FVoxelPinTypeSet::AllUniforms();
+	}
+}
+
+void FVoxelNode_MapKeys::PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType)
+{
+	GetPin(KeysPin).SetType(NewType.GetBufferType().WithBufferArray(true));
+}
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapValues, Values)
+{
+	const TValue<FVoxelMap> Map = GetNodeRuntime().Get<FVoxelMap>(MapPin, Query);
+	FVoxelPinType OutputPinType = GetNodeRuntime().GetPinData(ValuesPin).Type.GetInnerType();
+
+	return VOXEL_ON_COMPLETE(Map, OutputPinType)
+	{
+		FVoxelPinType ValueMapPinType = Map->Values[0].GetType();
+		if (OutputPinType != ValueMapPinType)
+		{
+			VOXEL_MESSAGE(Error, "{0}: Value Pin Type of {1} Map Value Type of {2}", this, OutputPinType.ToString(), ValueMapPinType.ToString());
+			return {};
+		}
+
+		const TSharedRef<FVoxelBufferBuilder> BufferBuilder = MakeVoxelShared<FVoxelBufferBuilder>(OutputPinType);
+		for (int32 Index = 0; Index < Map->Values.Num(); Index++)
+		{
+			BufferBuilder->Add(Map->Values[Index]);
+		}
+
+		return FVoxelRuntimePinValue::Make(BufferBuilder->MakeBuffer(), ReturnPinType);
+	};
+}
+
+#if WITH_EDITOR
+FVoxelPinTypeSet FVoxelNode_MapValues::GetPromotionTypes(const FVoxelPin& Pin) const
+{
+	if (Pin.Name == ValuesPin)
+	{
+		return FVoxelPinTypeSet::AllBufferArrays();
+	}
+	else
+	{
+		return FVoxelPinTypeSet::AllUniforms();
+	}
+}
+
+void FVoxelNode_MapValues::PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType)
+{
+	GetPin(ValuesPin).SetType(NewType.GetBufferType().WithBufferArray(true));
+}
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapLength, Length)
+{
+	const TValue<FVoxelMap> Map = GetNodeRuntime().Get<FVoxelMap>(MapPin, Query);
+
+	return VOXEL_ON_COMPLETE(Map)
+	{
+		return Map->Keys.Num();
+	};
+}
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapMake, Result)
 {
 	const TValue<FVoxelBuffer> Keys = GetNodeRuntime().Get<FVoxelBuffer>(KeysPin, Query);
@@ -85,7 +197,7 @@ void FVoxelNode_MapMake::PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapGet, Value)
+DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapFind, Value)
 {
 	const TValue<FVoxelMap> Map = GetNodeRuntime().Get<FVoxelMap>(MapPin, Query);
 	const TValue<FVoxelBuffer> Key = GetNodeRuntime().Get<FVoxelBuffer>(KeyPin, Query);
@@ -226,7 +338,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapGet, Value)
 }
 
 #if WITH_EDITOR
-FVoxelPinTypeSet FVoxelNode_MapGet::GetPromotionTypes(const FVoxelPin& Pin) const
+FVoxelPinTypeSet FVoxelNode_MapFind::GetPromotionTypes(const FVoxelPin& Pin) const
 {
 	if (Pin.Name == KeyPin || Pin.Name == ValuePin)
 	{
@@ -238,7 +350,7 @@ FVoxelPinTypeSet FVoxelNode_MapGet::GetPromotionTypes(const FVoxelPin& Pin) cons
 	}
 }
 
-void FVoxelNode_MapGet::PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType)
+void FVoxelNode_MapFind::PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType)
 {
 	if (Pin.Name == KeyPin) 
 	{
