@@ -1,5 +1,5 @@
 #include "Nodes/VoxelExtraMapNodes.h"
-#include "VoxelBufferUtilities.h"
+#include "Utilities/VoxelBufferGatherer.h"
 #include "VoxelBufferBuilder.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapFind, Value)
 				Indices[Index] = IndexToUse;
 			}
 
-			const TSharedRef<const FVoxelBuffer> Buffer = FVoxelBufferUtilities::Gather(*ValueBuilder->MakeBuffer(), FVoxelInt32Buffer::Make(Indices));
+			const TSharedRef<const FVoxelBuffer> Buffer = FVoxelBufferGatherer::Gather(*ValueBuilder->MakeBuffer(), FVoxelInt32Buffer::Make(Indices));
 			return FVoxelRuntimePinValue::Make(Buffer, ReturnPinType);
 		}
 
@@ -332,7 +332,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapFind, Value)
 			Indices[Index] = IndexToUse;
 		}
 
-		const TSharedRef<const FVoxelBuffer> Buffer = FVoxelBufferUtilities::Gather(*ValueBuilder->MakeBuffer(), FVoxelInt32Buffer::Make(Indices));
+		const TSharedRef<const FVoxelBuffer> Buffer = FVoxelBufferGatherer::Gather(*ValueBuilder->MakeBuffer(), FVoxelInt32Buffer::Make(Indices));
 		return FVoxelRuntimePinValue::Make(Buffer, ReturnPinType);
 	};
 }

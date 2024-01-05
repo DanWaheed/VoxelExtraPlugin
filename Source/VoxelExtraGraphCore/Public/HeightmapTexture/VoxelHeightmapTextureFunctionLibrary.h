@@ -6,7 +6,7 @@
 #include "VoxelFunctionLibrary.h"
 #include "VoxelHeightmapTextureData.h"
 #include "Buffer/VoxelFloatBuffers.h"
-#include "Heightmap/VoxelHeightmapFunctionLibrary.h"
+#include "FunctionLibrary/VoxelHeightmapFunctionLibrary.h"
 #include "VoxelHeightmapTextureFunctionLibrary.generated.h"
 
 USTRUCT()

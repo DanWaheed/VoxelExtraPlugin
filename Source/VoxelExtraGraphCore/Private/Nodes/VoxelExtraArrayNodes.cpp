@@ -1,5 +1,5 @@
 #include "Nodes/VoxelExtraArrayNodes.h"
-#include "VoxelBufferUtilities.h"
+#include "Utilities/VoxelBufferGatherer.h"
 #include "VoxelBufferBuilder.h"
 
 DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_ArrayGetItemBuffered, Result)
@@ -28,7 +28,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_ArrayGetItemBuffered, Result)
 			Indices[ValueIndex] = Value;
 		}
 
-		const TSharedRef<const FVoxelBuffer> Buffer = FVoxelBufferUtilities::Gather(*Values, FVoxelInt32Buffer::Make(Indices));
+		const TSharedRef<const FVoxelBuffer> Buffer = FVoxelBufferGatherer::Gather(*Values, FVoxelInt32Buffer::Make(Indices));
 		return FVoxelRuntimePinValue::Make(Buffer, ReturnPinType);
 	};
 }
