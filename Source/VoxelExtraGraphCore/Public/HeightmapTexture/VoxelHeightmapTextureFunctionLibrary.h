@@ -6,8 +6,23 @@
 #include "VoxelFunctionLibrary.h"
 #include "VoxelHeightmapTextureData.h"
 #include "Buffer/VoxelFloatBuffers.h"
-#include "Heightmap/VoxelHeightmapFunctionLibrary.h"
+#include "VoxelHeightmapFunctionLibrary.h"
 #include "VoxelHeightmapTextureFunctionLibrary.generated.h"
+
+UENUM()
+enum class EVoxelHeightmapInterpolationType : uint8
+{
+	// Fastest, rounds sample position
+	NearestNeighbor,
+	// Bilinear interpolation
+	// Smoother than nearest, but will have a visible grid pattern
+	// 2.5x slower than nearest
+	Bilinear,
+	// Bicubic interpolation
+	// Best quality, smooth results with no artifacts
+	// 4x slower than nearest, 1.6x slower than bilinear
+	Bicubic
+};
 
 USTRUCT()
 struct VOXELEXTRAGRAPHCORE_API FVoxelHeightmapResult

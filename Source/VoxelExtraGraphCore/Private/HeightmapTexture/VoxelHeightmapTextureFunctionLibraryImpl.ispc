@@ -6,6 +6,11 @@
 // ReSharper disable CppVariableCanBeMadeConstexpr
 // ReSharper disable CppUE4CodingStandardNamingViolationWarning
 
+FORCEINLINE uniform int32 DivideFloor(const uniform int32 Dividend, const uniform int32 Divisor)
+{
+	return Dividend / Divisor;
+}
+
 export void VoxelHeightmapFunctionLibrary_SampleHeightmap_NearestNeighbor(
 	const uniform float ArrayPositionX[],
 	const uniform bool bConstPositionX,

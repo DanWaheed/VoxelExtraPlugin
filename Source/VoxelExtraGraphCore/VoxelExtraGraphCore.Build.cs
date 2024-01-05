@@ -10,7 +10,8 @@ public class VoxelExtraGraphCore : ModuleRules_Voxel
 			new string[]
 			{
 				"VoxelCore",
-				"VoxelGraphCore"
+				"VoxelGraphCore",
+				"VoxelLandmass"
             }
 		);
     }

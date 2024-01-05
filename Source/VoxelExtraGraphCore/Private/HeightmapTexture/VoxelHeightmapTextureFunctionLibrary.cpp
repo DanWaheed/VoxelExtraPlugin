@@ -125,7 +125,7 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 	FVoxelFloatBufferStorage Result;
 	Result.Allocate(Position.Num());
 
-	ForeachVoxelBufferChunk_Parallel(Position.Num(), [&](const FVoxelBufferIterator& Iterator)
+	ForeachVoxelBufferChunk(Position.Num(), [&](const FVoxelBufferIterator& Iterator)
 		{
 			switch (Interpolation)
 			{
