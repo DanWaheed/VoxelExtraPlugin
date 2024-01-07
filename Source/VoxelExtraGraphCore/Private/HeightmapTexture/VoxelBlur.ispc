@@ -1,8 +1,8 @@
 export void VoxelBoxBlur(
     uniform int32 ArraySize,
-    const uniform uint16 InputArray[],
-    uniform int32 Amount,
-    uniform int32 SmoothedArray[])
+    const uniform float InputArray[],
+    uniform float Amount,
+    uniform float SmoothedArray[])
 {
     foreach (index = 0 ... ArraySize)
     {
@@ -12,7 +12,7 @@ export void VoxelBoxBlur(
             continue;
         }
 
-        int32 sum = InputArray[index];
+        float sum = InputArray[index];
         int32 count = 1;
 
         // Box blur with skip logic

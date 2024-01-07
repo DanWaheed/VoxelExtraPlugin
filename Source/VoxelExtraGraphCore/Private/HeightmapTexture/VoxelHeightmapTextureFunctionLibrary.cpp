@@ -1,4 +1,7 @@
 #include "HeightmapTexture/VoxelHeightmapTextureFunctionLibrary.h"
+#include "Utilities/VoxelBufferGatherer.h"
+#include "VoxelBufferBuilder.h"
+#include "EdGraph/EdGraphNode.h"
 #include "VoxelHeightmapTextureFunctionLibraryImpl.ispc.generated.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,7 +135,7 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 			default: ensure(false);
 			case EVoxelHeightmapInterpolationType::NearestNeighbor:
 			{
-				ispc::VoxelHeightmapFunctionLibrary_SampleHeightmap_NearestNeighbor(
+				ispc::VoxelExtraHeightmapFunctionLibrary_SampleHeightmap_NearestNeighbor(
 					Position.X.GetData(Iterator),
 					Position.X.IsConstant(),
 					Position.Y.GetData(Iterator),
@@ -149,7 +152,7 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 			break;
 			case EVoxelHeightmapInterpolationType::Bilinear:
 			{
-				ispc::VoxelHeightmapFunctionLibrary_SampleHeightmap_Bilinear(
+				ispc::VoxelExtraHeightmapFunctionLibrary_SampleHeightmap_Bilinear(
 					Position.X.GetData(Iterator),
 					Position.X.IsConstant(),
 					Position.Y.GetData(Iterator),
@@ -166,7 +169,7 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 			break;
 			case EVoxelHeightmapInterpolationType::Bicubic:
 			{
-				ispc::VoxelHeightmapFunctionLibrary_SampleHeightmap_Bicubic(
+				ispc::VoxelExtraHeightmapFunctionLibrary_SampleHeightmap_Bicubic(
 					Position.X.GetData(Iterator),
 					Position.X.IsConstant(),
 					Position.Y.GetData(Iterator),
@@ -186,4 +189,65 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 		});
 
 	return FVoxelFloatBuffer::Make(Result);
+}
+
+FVoxelLinearColorBuffer UVoxelHeightmapTextureFunctionLibrary::SampleWeightmapFromTexture(
+	const FVoxelVector2DBuffer& Position,
+	const FVoxelHeightmapTexture& TextureData,
+	const float ScaleZ,
+	const float ScaleXY) const
+{
+	if (TextureData.Data == nullptr)
+	{
+		VOXEL_MESSAGE(Error, "{0}: texture is null", this);
+		return {};
+	}
+
+	const TSharedPtr<const FVoxelHeightmapTextureData> HeightmapTextureData = TextureData.Data;
+	if (!HeightmapTextureData)
+	{
+		VOXEL_MESSAGE(Error, "{0} texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this);
+		return {};
+	}
+
+	const float CalculatedScaleZ = ScaleZ * (HeightmapTextureData->Max - HeightmapTextureData->Min) / MAX_uint16;
+	const float OffsetZ = ScaleZ * HeightmapTextureData->Min;
+
+	FVoxelInt32BufferStorage Indices;
+	Indices.Allocate(Position.Num());
+
+	ForeachVoxelBufferChunk_Parallel(Position.Num(), [&](const FVoxelBufferIterator& Iterator)
+		{
+			ispc::VoxelExtraHeightmapFunctionLibrary_SampleHeightmap_NearestNeighbor_GetIndices(
+				Position.X.GetData(Iterator),
+				Position.X.IsConstant(),
+				Position.Y.GetData(Iterator),
+				Position.Y.IsConstant(),
+				ScaleXY,
+				ScaleZ,
+				OffsetZ,
+				HeightmapTextureData->SizeX,
+				HeightmapTextureData->SizeY,
+				Iterator.Num(),
+				Indices.GetData(Iterator));
+		});
+
+	FVoxelFloatBufferStorage InRs;
+	FVoxelFloatBufferStorage InGs;
+	FVoxelFloatBufferStorage InBs;
+	FVoxelFloatBufferStorage InAs;
+	InRs.Allocate(Position.Num());
+	InGs.Allocate(Position.Num());
+	InBs.Allocate(Position.Num());
+	InAs.Allocate(Position.Num());
+	for (int32 ValueIndex = 0; ValueIndex < Position.Num(); ValueIndex++)
+	{
+		FLinearColor CurrentColor = HeightmapTextureData->Colors[Indices[ValueIndex]];
+		InRs[ValueIndex] = CurrentColor.R;
+		InGs[ValueIndex] = CurrentColor.G;
+		InBs[ValueIndex] = CurrentColor.B;
+		InAs[ValueIndex] = CurrentColor.A;
+	}
+
+	return FVoxelLinearColorBuffer::Make(InRs, InGs, InBs, InAs);
 }
