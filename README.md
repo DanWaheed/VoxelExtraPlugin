@@ -64,6 +64,10 @@ Find MAP Value
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/d6994446-44c3-44c0-be4a-9677012f5636)
 
+Find MAP Value OR Default
+
+![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/3b14da4f-6790-40c7-88a5-dac65606e79e)
+
 Get MAP Keys
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/0822dd26-9c96-4b7f-889a-51639a45e3c0)
@@ -86,10 +90,6 @@ Array Set from Uniform Index & Value
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/393e6601-25c7-403a-9a5d-5ea3810cbd39)
 
 ### Noise
-3D True Distance Noise
-
-![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/7ec67c8e-01eb-4086-aa7d-5457251d92ac)
-
 2D IQ Noise
 
 ![image](https://github.com/DanWaheed/VoxelExtraPlugin/assets/117957636/950c1385-8bd9-44bf-a751-230736321054)
