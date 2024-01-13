@@ -12,7 +12,8 @@ public:
 	uint32 SizeY;
 	uint16 Min;
 	uint16 Max;
-	TVoxelArray<uint16> Heights;
+	TVoxelArray<float> Heights;
+	TVoxelArray<FLinearColor> Colors;
 
 	FVoxelHeightmapTextureData() = default;
 
@@ -25,32 +26,25 @@ public:
 		const UTexture2D& Texture);
 
 private:
-	static TArray<uint16> BoxBlur(const TArray<uint16>& InputArray, int32 Amount)
+	static TArray<float> BoxBlur(const TArray<float>& InputArray, float Amount)
 	{
 		int32 ArraySize = InputArray.Num();
-		TArray<int> SmoothedArray;
+		TArray<float> SmoothedArray;
 		SmoothedArray.SetNumUninitialized(ArraySize);
 
 		ispc::VoxelBoxBlur(ArraySize, InputArray.GetData(), Amount, SmoothedArray.GetData());
 
-		TArray<uint16> ResultArray;
-		for (int IntArray : SmoothedArray)
-		{
-			uint16 Value = static_cast<uint16>(IntArray);
-			ResultArray.Add(Value);
-		}
-
-		return ResultArray;
+		return SmoothedArray;
 	}
 
-    static TArray<uint16> ScaleData(const TArray<uint16>& InputArray, uint16 Scale)
+    static TArray<float> ScaleData(const TArray<float>& InputArray, float Scale)
     {
-        TArray<uint16> Output;
+        TArray<float> Output;
         Output.SetNum(InputArray.Num());
 
         for (int32 i = 0; i < InputArray.Num(); ++i)
         {
-            uint16 PixelValue = InputArray[i];
+            float PixelValue = InputArray[i];
             Output[i] = PixelValue * Scale;
         }
 

@@ -65,6 +65,31 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+// Find MAP Value or Default
+USTRUCT(Category = "Map", meta = (DisplayName = "Find Or Default Map Value", CompactNodeTitle = "FIND OR DEFAULT", Keywords = "map object"))
+struct VOXELEXTRAGRAPHCORE_API FVoxelNode_MapFindOrDefault : public FVoxelNode
+{
+	GENERATED_BODY()
+	GENERATED_VOXEL_NODE_BODY()
+
+public:
+	VOXEL_INPUT_PIN(FVoxelMap, Map, nullptr);
+	VOXEL_INPUT_PIN(FVoxelWildcard, Key, nullptr);
+	VOXEL_INPUT_PIN(FVoxelWildcard, Default, nullptr);
+	VOXEL_OUTPUT_PIN(FVoxelWildcard, Value);
+
+	//~ Begin FVoxelNode Interface
+#if WITH_EDITOR
+	virtual FVoxelPinTypeSet GetPromotionTypes(const FVoxelPin& Pin) const override;
+	virtual void PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType) override;
+#endif
+	//~ End FVoxelNode Interface
+};
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 // Get MAP Keys
 USTRUCT(Category = "Map", meta = (DisplayName = "Get Map Keys", CompactNodeTitle = "KEYS", Keywords = "map object"))
 struct VOXELEXTRAGRAPHCORE_API FVoxelNode_MapKeys : public FVoxelNode
@@ -121,4 +146,47 @@ struct VOXELEXTRAGRAPHCORE_API FVoxelNode_MapLength : public FVoxelNode
 public:
 	VOXEL_INPUT_PIN(FVoxelMap, Map, nullptr);
 	VOXEL_OUTPUT_PIN(int32, Length);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+class FVoxelExtraMapFindProcessor {
+public:
+	static int32 GetKeyIndex(TVoxelArray<FVoxelRuntimePinValue> Keys, FVoxelRuntimePinValue KeyElement) 
+	{
+		TConstVoxelArrayView<uint8> RawKeyData = KeyElement.GetRawView();
+
+		for (int32 KeyIndex = 0; KeyIndex < Keys.Num(); KeyIndex++)
+		{
+			FVoxelRuntimePinValue KeyRuntimeValue = Keys[KeyIndex];
+			TConstVoxelArrayView<uint8> RawKeyRuntimeData = KeyRuntimeValue.GetRawView();
+
+			if (RawKeyRuntimeData.Num() != RawKeyData.Num())
+			{
+				continue;
+			}
+
+			bool IsSameRawData = true;
+			for (int32 RawIndex = 0; RawIndex < RawKeyData.Num(); RawIndex++)
+			{
+				uint8 DataElement = RawKeyData[RawIndex];
+				uint8 RuntimeDataElement = RawKeyRuntimeData[RawIndex];
+				if (DataElement != RuntimeDataElement)
+				{
+					IsSameRawData = false;
+					break;
+				}
+			}
+
+			if (IsSameRawData)
+			{
+				return KeyIndex;
+				break;
+			}
+		}
+
+		return -1;
+	}
 };

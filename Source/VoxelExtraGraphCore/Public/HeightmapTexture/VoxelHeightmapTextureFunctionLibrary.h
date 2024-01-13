@@ -6,7 +6,7 @@
 #include "VoxelFunctionLibrary.h"
 #include "VoxelHeightmapTextureData.h"
 #include "Buffer/VoxelFloatBuffers.h"
-#include "Heightmap/VoxelHeightmapFunctionLibrary.h"
+#include "FunctionLibrary/VoxelHeightmapFunctionLibrary.h"
 #include "VoxelHeightmapTextureFunctionLibrary.generated.h"
 
 USTRUCT()
@@ -15,6 +15,7 @@ struct VOXELEXTRAGRAPHCORE_API FVoxelHeightmapResult
 	GENERATED_BODY()
 
 	FVoxelFloatBuffer Heights;
+	FVoxelLinearColorBuffer Colors;
 	uint16 Min;
 	uint16 Max;
 	uint16 Width;
@@ -86,4 +87,13 @@ public:
 		const float ScaleXY = 100.f,
 		EVoxelHeightmapInterpolationType Interpolation = EVoxelHeightmapInterpolationType::Bicubic,
 		float BicubicSmoothness = 1.f) const;
+
+	// Will clamp position if outside of the heightmap bounds
+	// Heightmap is centered, ie position is between -Size/2 and Size/2
+	UFUNCTION(Category = "Heightmap Texture", meta = (AdvancedDisplay = "Interpolation, BicubicSmoothness"))
+	FVoxelLinearColorBuffer SampleWeightmapFromTexture(
+		const FVoxelVector2DBuffer& Position,
+		const FVoxelHeightmapTexture& TextureData,
+		const float ScaleZ = 2.f,
+		const float ScaleXY = 100.f) const;
 };
