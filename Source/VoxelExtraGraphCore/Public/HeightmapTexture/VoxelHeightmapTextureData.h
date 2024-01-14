@@ -13,7 +13,7 @@ public:
 	uint16 Min;
 	uint16 Max;
 	TVoxelArray<float> Heights;
-	TVoxelArray<FLinearColor> Colors;
+	TVoxelArray<FFloat16Color> Colors;
 
 	FVoxelHeightmapTextureData() = default;
 

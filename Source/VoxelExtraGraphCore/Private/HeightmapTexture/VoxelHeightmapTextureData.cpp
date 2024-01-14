@@ -2,6 +2,15 @@
 
 DEFINE_VOXEL_MEMORY_STAT(STAT_VoxelHeightmapTextureData);
 
+FORCEINLINE FArchive& operator<<(FArchive& Ar, FFloat16Color& Color)
+{
+	Ar << Color.R;
+	Ar << Color.G;
+	Ar << Color.B;
+	Ar << Color.A;
+	return Ar;
+}
+
 int64 FVoxelHeightmapTextureData::GetAllocatedSize() const
 {
 	int64 AllocatedSize = sizeof(*this);
@@ -65,8 +74,8 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 	if (const uint16_t* IntegerImageData = reinterpret_cast<const uint16_t*>(TextureData.LockReadOnly()))
 	{
 		const int32 PixelCount = PlatformData->SizeX * PlatformData->SizeY;
-		ProcessedHeights.SetNum(PixelCount);
-		Colors.SetNum(PixelCount);
+		ProcessedHeights.SetNumUninitialized(PixelCount);
+		Colors.SetNumUninitialized(PixelCount);
 
 		if (PlatformData->PixelFormat == PF_B8G8R8A8)
 		{
@@ -74,8 +83,8 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 
 			for (int32 D = 0; D < PixelCount; ++D)
 			{
-				FLinearColor LinearColor = FLinearColor(ColorTextureData[D]);
-				Colors[D] = LinearColor;
+				const FFloat16Color Color = FFloat16Color(ColorTextureData[D]);
+				Colors[D] = Color;
 			}
 		}
 		else if (PlatformData->PixelFormat == PF_G16)
@@ -84,10 +93,10 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 
 			for (int32 D = 0; D < PixelCount; ++D)
 			{
-				uint16 Data = G16Data[D];
-				FLinearColor LinearColor;
-				LinearColor.A = Data / 65535;
-				Colors[D] = LinearColor;
+				const uint16 Data = G16Data[D];
+				FFloat16Color Color;
+				Color.A = Data / 65535;
+				Colors[D] = Color;
 				ProcessedHeights[D] = Data;
 			}
 		}
@@ -97,10 +106,10 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 
 			for (int32 D = 0; D < PixelCount; ++D)
 			{
-				uint8 Data = G8Data[D];
-				FLinearColor LinearColor;
-				LinearColor.A = Data / 255;
-				Colors[D] = LinearColor;
+				const uint8 Data = G8Data[D];
+				FFloat16Color Color;
+				Color.A = Data / 255;
+				Colors[D] = Color;
 				ProcessedHeights[D] = Data;
 			}
 		}
@@ -110,7 +119,7 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 
 			for (int32 D = 0; D < PixelCount; ++D)
 			{
-				const FLinearColor Color = FLinearColor(FloatColorData[D]);
+				const FFloat16Color Color = FloatColorData[D];
 				Colors[D] = Color;
 				ProcessedHeights[D] = Color.A * 65535;
 			}
@@ -121,7 +130,7 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 
 			for (int32 D = 0; D < PixelCount; ++D)
 			{
-				const FLinearColor Color = FLinearColor(ColorData[D]);
+				const FFloat16Color Color = FFloat16Color(ColorData[D]);
 				Colors[D] = Color;
 				ProcessedHeights[D] = Color.A * 65535;
 			}
@@ -167,7 +176,7 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 	HeightmapTextureData->Min = Min;
 	HeightmapTextureData->Max = Max;
 	HeightmapTextureData->Heights = TVoxelArray<float>(ProcessedHeights);
-	HeightmapTextureData->Colors = TVoxelArray<FLinearColor>(Colors);
+	HeightmapTextureData->Colors = TVoxelArray<FFloat16Color>(Colors);
 
 	return HeightmapTextureData;
 }

@@ -285,7 +285,7 @@ FVoxelLinearColorBuffer UVoxelHeightmapTextureFunctionLibrary::SampleWeightmapFr
 	InAs.Allocate(Position.Num());
 	for (int32 ValueIndex = 0; ValueIndex < Position.Num(); ValueIndex++)
 	{
-		FLinearColor CurrentColor = Data->Colors[Indices[ValueIndex]];
+		FFloat16Color CurrentColor = Data->Colors[Indices[ValueIndex]];
 		InRs[ValueIndex] = CurrentColor.R;
 		InGs[ValueIndex] = CurrentColor.G;
 		InBs[ValueIndex] = CurrentColor.B;
