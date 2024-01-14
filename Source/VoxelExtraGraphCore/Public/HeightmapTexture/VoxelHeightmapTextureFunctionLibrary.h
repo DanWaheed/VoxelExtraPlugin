@@ -7,6 +7,8 @@
 #include "VoxelHeightmapTextureData.h"
 #include "Buffer/VoxelFloatBuffers.h"
 #include "FunctionLibrary/VoxelHeightmapFunctionLibrary.h"
+#include "VoxelHeightmapTextureAssetUserData.h"
+#include "VoxelHeightmapTextureAssetData.h"
 #include "VoxelHeightmapTextureFunctionLibrary.generated.h"
 
 USTRUCT()
@@ -28,7 +30,8 @@ struct VOXELEXTRAGRAPHCORE_API FVoxelHeightmapTexture
 {
 	GENERATED_BODY()
 
-	TSharedPtr<const FVoxelHeightmapTextureData> Data;
+	TWeakObjectPtr<UVoxelHeightmapTextureAsset> Asset;
+	TSharedPtr<const FVoxelHeightmapTextureAssetData> Data;
 };
 
 USTRUCT()
@@ -41,6 +44,14 @@ struct VOXELEXTRAGRAPHCORE_API FVoxelHeightmapTextureObject
 };
 
 DECLARE_VOXEL_OBJECT_PIN_TYPE(FVoxelHeightmapTexture);
+
+USTRUCT()
+struct VOXELEXTRAGRAPHCORE_API FVoxelHeightmapTexturePinType : public FVoxelObjectPinType
+{
+	GENERATED_BODY()
+
+	DEFINE_VOXEL_OBJECT_PIN_TYPE(FVoxelHeightmapTexture, UVoxelHeightmapTextureAsset);
+};
 
 DECLARE_VOXEL_OBJECT_PIN_TYPE(FVoxelHeightmapTextureObject);
 

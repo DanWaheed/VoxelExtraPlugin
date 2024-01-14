@@ -22,8 +22,7 @@ public:
 	int64 GetAllocatedSize() const;
 	void Serialize(FArchive& Ar);
 
-	static TSharedPtr<const FVoxelHeightmapTextureData> ReadTexture(
-		const UTexture2D& Texture);
+	static TSharedPtr<FVoxelHeightmapTextureData> ReadTexture(const UTexture2D& Texture);
 
 private:
 	static TArray<float> BoxBlur(const TArray<float>& InputArray, float Amount)

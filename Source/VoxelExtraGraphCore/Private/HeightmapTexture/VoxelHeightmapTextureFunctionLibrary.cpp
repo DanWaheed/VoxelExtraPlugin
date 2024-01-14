@@ -2,11 +2,28 @@
 #include "Utilities/VoxelBufferGatherer.h"
 #include "VoxelBufferBuilder.h"
 #include "EdGraph/EdGraphNode.h"
+#include "VoxelDependencyTracker.h"
 #include "VoxelHeightmapTextureFunctionLibraryImpl.ispc.generated.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+void FVoxelHeightmapTexturePinType::Convert(
+	const bool bSetObject,
+	TWeakObjectPtr<UVoxelHeightmapTextureAsset>& Object,
+	FVoxelHeightmapTexture& Struct) const
+{
+	if (bSetObject)
+	{
+		Object = Struct.Asset;
+	}
+	else
+	{
+		Struct.Asset = Object;
+		Struct.Data = Object->GetData();
+	}
+}
 
 void FVoxelHeightmapTextureObjectPinType::Convert(
 	const bool bSetObject,
@@ -21,10 +38,10 @@ void FVoxelHeightmapTextureObjectPinType::Convert(
 	{
 		Struct.Texture = Object;
 
-		if (const TSharedPtr<const FVoxelHeightmapTextureData> TextureData = FVoxelHeightmapTextureData::ReadTexture(*Object))
+		if (UVoxelHeightmapTextureAsset* Asset = UVoxelHeightmapTextureAssetUserData::GetAsset(*Object))
 		{
-
-			Struct.HeightmapTexture.Data = TextureData;
+			Struct.HeightmapTexture.Asset = Asset;
+			Struct.HeightmapTexture.Data = Asset->GetData();
 		}
 	}
 }
@@ -58,7 +75,15 @@ float UVoxelHeightmapTextureFunctionLibrary::GetMinHeightFromHeightmapTexture(
 		return {};
 	}
 
-	return TextureData.Data->Min * ScaleZ;
+	GetQuery().GetDependencyTracker().AddDependency(TextureData.Data->Dependency);
+	const TSharedPtr<const FVoxelHeightmapTextureData> Data = TextureData.Data->GetTextureData();
+	if (!Data)
+	{
+		VOXEL_MESSAGE(Error, "{0}: {1}: texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this, TextureData.Asset);
+		return {};
+	}
+
+	return Data->Min * ScaleZ;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,7 +100,15 @@ float UVoxelHeightmapTextureFunctionLibrary::GetMaxHeightFromHeightmapTexture(
 		return {};
 	}
 
-	return TextureData.Data->Max * ScaleZ;
+	GetQuery().GetDependencyTracker().AddDependency(TextureData.Data->Dependency);
+	const TSharedPtr<const FVoxelHeightmapTextureData> Data = TextureData.Data->GetTextureData();
+	if (!Data)
+	{
+		VOXEL_MESSAGE(Error, "{0}: {1}: texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this, TextureData.Asset);
+		return {};
+	}
+
+	return Data->Max * ScaleZ;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,7 +125,15 @@ float UVoxelHeightmapTextureFunctionLibrary::GetWidthFromHeightmapTexture(
 		return {};
 	}
 
-	return TextureData.Data->SizeX * (ScaleXY / 2)	;
+	GetQuery().GetDependencyTracker().AddDependency(TextureData.Data->Dependency);
+	const TSharedPtr<const FVoxelHeightmapTextureData> Data = TextureData.Data->GetTextureData();
+	if (!Data)
+	{
+		VOXEL_MESSAGE(Error, "{0}: {1}: texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this, TextureData.Asset);
+		return {};
+	}
+
+	return Data->SizeX * (ScaleXY / 2);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -115,15 +156,16 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 		return {};
 	}
 
-	const TSharedPtr<const FVoxelHeightmapTextureData> HeightmapTextureData = TextureData.Data;
-	if (!HeightmapTextureData)
+	GetQuery().GetDependencyTracker().AddDependency(TextureData.Data->Dependency);
+	const TSharedPtr<const FVoxelHeightmapTextureData> Data = TextureData.Data->GetTextureData();
+	if (!Data)
 	{
-		VOXEL_MESSAGE(Error, "{0} texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this);
+		VOXEL_MESSAGE(Error, "{0}: {1}: texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this, TextureData.Asset);
 		return {};
 	}
 
-	const float CalculatedScaleZ = ScaleZ * (HeightmapTextureData->Max - HeightmapTextureData->Min) / MAX_uint16;
-	const float OffsetZ = ScaleZ * HeightmapTextureData->Min;
+	const float CalculatedScaleZ = ScaleZ * (Data->Max - Data->Min) / MAX_uint16;
+	const float OffsetZ = ScaleZ * Data->Min;
 
 	FVoxelFloatBufferStorage Result;
 	Result.Allocate(Position.Num());
@@ -143,9 +185,9 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 					ScaleXY,
 					ScaleZ,
 					OffsetZ,
-					HeightmapTextureData->SizeX,
-					HeightmapTextureData->SizeY,
-					HeightmapTextureData->Heights.GetData(),
+					Data->SizeX,
+					Data->SizeY,
+					Data->Heights.GetData(),
 					Iterator.Num(),
 					Result.GetData(Iterator));
 			}
@@ -160,9 +202,9 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 					ScaleXY,
 					ScaleZ,
 					OffsetZ,
-					HeightmapTextureData->SizeX,
-					HeightmapTextureData->SizeY,
-					HeightmapTextureData->Heights.GetData(),
+					Data->SizeX,
+					Data->SizeY,
+					Data->Heights.GetData(),
 					Iterator.Num(),
 					Result.GetData(Iterator));
 			}
@@ -178,9 +220,9 @@ FVoxelFloatBuffer UVoxelHeightmapTextureFunctionLibrary::SampleHeightmapFromText
 					ScaleZ,
 					OffsetZ,
 					BicubicSmoothness,
-					HeightmapTextureData->SizeX,
-					HeightmapTextureData->SizeY,
-					HeightmapTextureData->Heights.GetData(),
+					Data->SizeX,
+					Data->SizeY,
+					Data->Heights.GetData(),
 					Iterator.Num(),
 					Result.GetData(Iterator));
 			}
@@ -203,15 +245,16 @@ FVoxelLinearColorBuffer UVoxelHeightmapTextureFunctionLibrary::SampleWeightmapFr
 		return {};
 	}
 
-	const TSharedPtr<const FVoxelHeightmapTextureData> HeightmapTextureData = TextureData.Data;
-	if (!HeightmapTextureData)
+	GetQuery().GetDependencyTracker().AddDependency(TextureData.Data->Dependency);
+	const TSharedPtr<const FVoxelHeightmapTextureData> Data = TextureData.Data->GetTextureData();
+	if (!Data)
 	{
-		VOXEL_MESSAGE(Error, "{0} texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this);
+		VOXEL_MESSAGE(Error, "{0}: {1}: texture failed to be read, this will occur if texture has mips or if the texture format is unsupported", this, TextureData.Asset);
 		return {};
 	}
 
-	const float CalculatedScaleZ = ScaleZ * (HeightmapTextureData->Max - HeightmapTextureData->Min) / MAX_uint16;
-	const float OffsetZ = ScaleZ * HeightmapTextureData->Min;
+	const float CalculatedScaleZ = ScaleZ * (Data->Max - Data->Min) / MAX_uint16;
+	const float OffsetZ = ScaleZ * Data->Min;
 
 	FVoxelInt32BufferStorage Indices;
 	Indices.Allocate(Position.Num());
@@ -226,8 +269,8 @@ FVoxelLinearColorBuffer UVoxelHeightmapTextureFunctionLibrary::SampleWeightmapFr
 				ScaleXY,
 				ScaleZ,
 				OffsetZ,
-				HeightmapTextureData->SizeX,
-				HeightmapTextureData->SizeY,
+				Data->SizeX,
+				Data->SizeY,
 				Iterator.Num(),
 				Indices.GetData(Iterator));
 		});
@@ -242,7 +285,7 @@ FVoxelLinearColorBuffer UVoxelHeightmapTextureFunctionLibrary::SampleWeightmapFr
 	InAs.Allocate(Position.Num());
 	for (int32 ValueIndex = 0; ValueIndex < Position.Num(); ValueIndex++)
 	{
-		FLinearColor CurrentColor = HeightmapTextureData->Colors[Indices[ValueIndex]];
+		FLinearColor CurrentColor = Data->Colors[Indices[ValueIndex]];
 		InRs[ValueIndex] = CurrentColor.R;
 		InGs[ValueIndex] = CurrentColor.G;
 		InBs[ValueIndex] = CurrentColor.B;

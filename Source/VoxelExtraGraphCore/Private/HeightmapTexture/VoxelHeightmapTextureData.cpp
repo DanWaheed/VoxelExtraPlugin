@@ -45,9 +45,7 @@ void FVoxelHeightmapTextureData::Serialize(FArchive& Ar)
 
 	UpdateStats();
 }
-
-TSharedPtr<const FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(
-	const UTexture2D& Texture)
+TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(const UTexture2D& Texture)
 {
 	VOXEL_FUNCTION_COUNTER();
 #if WITH_EDITOR
