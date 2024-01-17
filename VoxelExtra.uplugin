@@ -17,6 +17,14 @@
 		{
 			"Name": "Voxel",
 			"Enabled": true
+		},
+		{
+			"Name": "PCG",	
+			"Enabled": true
+		},
+		{
+			"Name": "PCGGeometryScriptInterop",
+			"Enabled": true
 		}
 	],
 	"Modules": [
@@ -24,6 +32,11 @@
 			"Name": "VoxelExtraGraphCore",
 			"Type": "Runtime",
 			"LoadingPhase": "PostConfigInit"
+		},
+		{
+			"Name": "VoxelPCGExtended",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"IsBetaVersion": false,

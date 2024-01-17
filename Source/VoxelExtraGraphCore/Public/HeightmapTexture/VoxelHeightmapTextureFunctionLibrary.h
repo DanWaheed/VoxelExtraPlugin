@@ -9,6 +9,7 @@
 #include "FunctionLibrary/VoxelHeightmapFunctionLibrary.h"
 #include "VoxelHeightmapTextureAssetUserData.h"
 #include "VoxelHeightmapTextureAssetData.h"
+#include "VoxelHeightmapTextureAsset.h"
 #include "VoxelHeightmapTextureFunctionLibrary.generated.h"
 
 USTRUCT()
