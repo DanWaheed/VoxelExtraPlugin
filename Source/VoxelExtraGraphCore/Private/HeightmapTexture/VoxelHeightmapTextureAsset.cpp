@@ -173,7 +173,7 @@ void UVoxelHeightmapTextureAsset::PostEditChangeProperty(FPropertyChangedEvent& 
 
 	// Recompute data
 	// Do this next frame to be able to undo on cancel
-	FVoxelSystemUtilities::DelayedCall([=]
+	FVoxelUtilities::DelayedCall([=]
 		{
 			FScopedSlowTask SlowTask(1.f, FText::FromString("Heightmap Texture " + GetPathName()));
 			SlowTask.MakeDialog(true, true);

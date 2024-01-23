@@ -26,6 +26,7 @@ void UPCGVoxelData::Initialize(
 	const FName InFloatChannelName,
 	const FName InVectorChannelName,
 	const bool InSkipVectorChannel,
+	const float InGradientStep,
 	TSharedPtr<FVoxelRuntimeInfo> InRuntimeInfo,
 	const FBox& InBounds)
 {
@@ -34,6 +35,7 @@ void UPCGVoxelData::Initialize(
 	RuntimeInfo = InRuntimeInfo;
 	Bounds = InBounds;
 	SkipVectorChannel = InSkipVectorChannel;
+	GradientStep = InGradientStep;
 	World = InWorld;
 
 	FloatChannel = FVoxelWorldChannelManager::FindRuntimeChannel(World, FloatChannelName);
@@ -175,8 +177,6 @@ FVoxelRuntimePinValue UPCGVoxelData::QueryChannel(TSharedPtr<FVoxelRuntimeChanne
 	{
 		return {};
 	}
-
-	const float GradientStep = 100.f;
 
 	const TSharedRef<FVoxelTerminalGraphInstance> TerminalGraphInstance = FVoxelTerminalGraphInstance::MakeDummy(RuntimeInfo.ToSharedRef());
 

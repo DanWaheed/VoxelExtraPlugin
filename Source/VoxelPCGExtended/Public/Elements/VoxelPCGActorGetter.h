@@ -38,6 +38,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings", meta = (PCG_Overridable))
 	bool SkipVectorChannel;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Settings", meta = (PCG_Overridable))
+	float GradientStep = 100.f;
 };
 
 class FVoxelChannelPCGContext : public FPCGContext
@@ -52,8 +55,8 @@ class FPCGGetVoxelChannelDataElement : public IPCGElement
 {
 public:
 	virtual FPCGContext* Initialize(const FPCGDataCollection& InputData, TWeakObjectPtr<UPCGComponent> SourceComponent, const UPCGNode* Node) override;
-	virtual bool CanExecuteOnlyOnMainThread(FPCGContext* Context) const override { return true; }
-	virtual bool IsCacheable(const UPCGSettings* InSettings) const override { return false; }
+	virtual bool CanExecuteOnlyOnMainThread(FPCGContext* Context) const override { return false; }
+	virtual bool IsCacheable(const UPCGSettings* InSettings) const override { return true; }
 
 protected:
 	virtual bool ExecuteInternal(FPCGContext* InContext) const override;

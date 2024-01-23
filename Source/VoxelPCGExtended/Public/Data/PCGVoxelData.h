@@ -22,6 +22,7 @@ public:
 		const FName InFloatChannelName,
 		const FName InVectorChannelName,
 		const bool InSkipVectorChannel,
+		const float InGradientStep,
 		TSharedPtr<FVoxelRuntimeInfo> InRuntimeInfo,
 		const FBox& InBounds);
 
@@ -60,6 +61,9 @@ protected:
 
 	UPROPERTY()
 	bool SkipVectorChannel;
+
+	UPROPERTY()
+	float GradientStep;
 
 	UPROPERTY()
 	FBox Bounds = FBox(EForceInit::ForceInit);

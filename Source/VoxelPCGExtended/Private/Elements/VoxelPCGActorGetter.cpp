@@ -87,6 +87,7 @@ bool FPCGGetVoxelChannelDataElement::ExecuteInternal(FPCGContext* InContext) con
 			Settings->FloatChannel.Name,
 			Settings->VectorChannel.Name,
 			Settings->SkipVectorChannel,
+			Settings->GradientStep,
 			RuntimeInfo.ToSharedPtr(),
 			ActorBounds);
 
