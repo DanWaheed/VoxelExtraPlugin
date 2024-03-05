@@ -25,7 +25,7 @@ public:
 	static TSharedPtr<FVoxelHeightmapTextureData> ReadTexture(const UTexture2D& Texture);
 
 private:
-	static TArray<float> BoxBlur(const TArray<float>& InputArray, float Amount)
+	static TArray<float> BoxBlur(const TVoxelArray<float>& InputArray, float Amount)
 	{
 		int32 ArraySize = InputArray.Num();
 		TArray<float> SmoothedArray;
@@ -36,14 +36,14 @@ private:
 		return SmoothedArray;
 	}
 
-    static TArray<float> ScaleData(const TArray<float>& InputArray, float Scale)
+    static TArray<float> ScaleData(const TVoxelArray<float>& InputArray, float Scale)
     {
         TArray<float> Output;
         Output.SetNum(InputArray.Num());
 
         for (int32 i = 0; i < InputArray.Num(); ++i)
         {
-            float PixelValue = InputArray[i];
+	        const float PixelValue = InputArray[i];
             Output[i] = PixelValue * Scale;
         }
 

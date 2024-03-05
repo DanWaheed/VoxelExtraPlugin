@@ -9,42 +9,17 @@ public class VoxelPCGExtended : ModuleRules_Voxel
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"VoxelCore",
-				"VoxelGraphCore"
-            }
-		);
-		
-		PublicDependencyModuleNames.AddRange(
-			new string[]
-			{
-                "Core",
-                "CoreUObject",
-                "NavigationSystem",
-                "StaticMeshDescription",
-                "MeshDescription",
-                "Engine",
-				"PCG",
-                "PCGGeometryScriptInterop",
-                "UnrealEd"
-            }
-		);
-			
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"Projects", // So that we can use the IPluginManager, required for icons
-                "DetailCustomizations",
+				"VoxelGraphCore",
                 "PCG"
             }
 		);
 
-		PrivateIncludePathModuleNames.Add("PCG");
-
         PrivateIncludePaths.AddRange(
-            new string[] {
-                Path.GetFullPath(Path.Combine(EngineDirectory, "Plugins\\Experimental\\PCG\\Source\\PCG\\Private")),
+            new[] {
+                Path.GetFullPath(Path.Combine(EngineDirectory, @"Plugins\Experimental\PCG\Source\PCG\Private")),
             });
     }
 }

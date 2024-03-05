@@ -1,6 +1,5 @@
 #pragma once
 
-#include "VoxelMinimal.h"
 #include "Engine/AssetUserData.h"
 #include "VoxelHeightmapTextureAssetUserData.generated.h"
 

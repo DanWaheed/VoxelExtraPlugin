@@ -13,8 +13,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapKeys, Keys)
 
 	return VOXEL_ON_COMPLETE(Map, OutputPinType)
 	{
-		FVoxelPinType KeyMapPinType = Map->Keys[0].GetType();
-		if (OutputPinType != KeyMapPinType)
+		if (const FVoxelPinType KeyMapPinType = Map->Keys[0].GetType(); OutputPinType != KeyMapPinType)
 		{
 			VOXEL_MESSAGE(Error, "{0}: Key Pin Type of {1} Map Key Type of {2}", this, OutputPinType.ToString(), KeyMapPinType.ToString());
 			return {};
@@ -60,7 +59,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapValues, Values)
 
 	return VOXEL_ON_COMPLETE(Map, OutputPinType)
 	{
-		FVoxelPinType ValueMapPinType = Map->Values[0].GetType();
+		const FVoxelPinType ValueMapPinType = Map->Values[0].GetType();
 		if (OutputPinType != ValueMapPinType)
 		{
 			VOXEL_MESSAGE(Error, "{0}: Value Pin Type of {1} Map Value Type of {2}", this, OutputPinType.ToString(), ValueMapPinType.ToString());
@@ -145,7 +144,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapMake, Result)
 		KeysArray.SetNum(Keys->Num());
 		for (int32 Index = 0; Index < Keys->Num(); Index++)
 		{
-			FVoxelRuntimePinValue Key = Keys->GetGeneric(Index);
+			const FVoxelRuntimePinValue Key = Keys->GetGeneric(Index);
 
 			KeysArray[Index] = Key;
 		}
@@ -154,7 +153,7 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapMake, Result)
 		ValuesArray.SetNum(Values->Num());
 		for (int32 Index = 0; Index < Values->Num(); Index++)
 		{
-			FVoxelRuntimePinValue Value = Values->GetGeneric(Index);
+			const FVoxelRuntimePinValue Value = Values->GetGeneric(Index);
 
 			ValuesArray[Index] = Value;
 		}
@@ -216,15 +215,13 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapFind, Value)
 			return {};
 		}
 
-		FVoxelPinType KeyMapPinType = Keys[0].GetType();
-		if (KeyPinType != KeyMapPinType)
+		if (FVoxelPinType KeyMapPinType = Keys[0].GetType(); KeyPinType != KeyMapPinType)
 		{
 			VOXEL_MESSAGE(Error, "{0}: Key Pin Type of {1} Map Key Type of {2}", this, KeyPinType.ToString(), KeyMapPinType.ToString());
 			return {};
 		}
-		
-		FVoxelPinType ValueMapPinType = Values[0].GetType();
-		if (ValuePinType != ValueMapPinType)
+
+		if (FVoxelPinType ValueMapPinType = Values[0].GetType(); ValuePinType != ValueMapPinType)
 		{
 			VOXEL_MESSAGE(Error, "{0}: Value Pin Type of {1} Map Value Type of {2}", this, ValuePinType.ToString(), ValueMapPinType.ToString());
 			return {};
@@ -328,15 +325,13 @@ DEFINE_VOXEL_NODE_COMPUTE(FVoxelNode_MapFindOrDefault, Value)
 			return {};
 		}
 
-		FVoxelPinType KeyMapPinType = Keys[0].GetType();
-		if (KeyPinType != KeyMapPinType)
+		if (FVoxelPinType KeyMapPinType = Keys[0].GetType(); KeyPinType != KeyMapPinType)
 		{
 			VOXEL_MESSAGE(Error, "{0}: Key Pin Type of {1} Map Key Type of {2}", this, KeyPinType.ToString(), KeyMapPinType.ToString());
 			return {};
 		}
 
-		FVoxelPinType ValueMapPinType = Values[0].GetType();
-		if (ValuePinType != ValueMapPinType)
+		if (FVoxelPinType ValueMapPinType = Values[0].GetType(); ValuePinType != ValueMapPinType)
 		{
 			VOXEL_MESSAGE(Error, "{0}: Value Pin Type of {1} Map Value Type of {2}", this, ValuePinType.ToString(), ValueMapPinType.ToString());
 			return {};
@@ -385,10 +380,8 @@ FVoxelPinTypeSet FVoxelNode_MapFindOrDefault::GetPromotionTypes(const FVoxelPin&
 	{
 		return FVoxelPinTypeSet::AllBuffers();
 	}
-	else
-	{
-		return FVoxelPinTypeSet::AllUniforms();
-	}
+	
+	return FVoxelPinTypeSet::AllUniforms();
 }
 
 void FVoxelNode_MapFindOrDefault::PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType)

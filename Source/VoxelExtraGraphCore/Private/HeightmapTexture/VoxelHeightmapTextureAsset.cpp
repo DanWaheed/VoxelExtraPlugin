@@ -4,10 +4,8 @@
 #include "HeightmapTexture/VoxelHeightmapTextureData.h"
 #include "HeightmapTexture/VoxelHeightmapTextureAssetData.h"
 
-#include "MeshDescription.h"
 #include "Misc/ConfigCacheIni.h"
 #include "AssetRegistry/AssetData.h"
-#include "AssetRegistry/AssetRegistryModule.h"
 #include "Serialization/BufferArchive.h"
 
 #if WITH_EDITOR

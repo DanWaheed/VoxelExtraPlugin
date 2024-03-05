@@ -3,7 +3,6 @@
 #include "VoxelMinimal.h"
 #include "VoxelNode.h"
 #include "VoxelObjectPinType.h"
-#include "Buffer/VoxelBaseBuffers.h"
 #include "VoxelExtraMapNodes.generated.h"
 
 USTRUCT()
@@ -34,6 +33,11 @@ public:
 	virtual FVoxelPinTypeSet GetPromotionTypes(const FVoxelPin& Pin) const override;
 	virtual void PromotePin(FVoxelPin& Pin, const FVoxelPinType& NewType) override;
 #endif
+
+	virtual bool IsPureNode() const override
+	{
+		return true;
+	}
 	//~ End FVoxelNode Interface
 };
 
@@ -154,9 +158,9 @@ public:
 
 class FVoxelExtraMapFindProcessor {
 public:
-	static int32 GetKeyIndex(TVoxelArray<FVoxelRuntimePinValue> Keys, FVoxelRuntimePinValue KeyElement) 
+	static int32 GetKeyIndex(TVoxelArray<FVoxelRuntimePinValue> Keys, const FVoxelRuntimePinValue& KeyElement) 
 	{
-		TConstVoxelArrayView<uint8> RawKeyData = KeyElement.GetRawView();
+		const TConstVoxelArrayView<uint8> RawKeyData = KeyElement.GetRawView();
 
 		for (int32 KeyIndex = 0; KeyIndex < Keys.Num(); KeyIndex++)
 		{
@@ -171,9 +175,8 @@ public:
 			bool IsSameRawData = true;
 			for (int32 RawIndex = 0; RawIndex < RawKeyData.Num(); RawIndex++)
 			{
-				uint8 DataElement = RawKeyData[RawIndex];
-				uint8 RuntimeDataElement = RawKeyRuntimeData[RawIndex];
-				if (DataElement != RuntimeDataElement)
+				const uint8 DataElement = RawKeyData[RawIndex];
+				if (const uint8 RuntimeDataElement = RawKeyRuntimeData[RawIndex]; DataElement != RuntimeDataElement)
 				{
 					IsSameRawData = false;
 					break;
@@ -183,7 +186,6 @@ public:
 			if (IsSameRawData)
 			{
 				return KeyIndex;
-				break;
 			}
 		}
 

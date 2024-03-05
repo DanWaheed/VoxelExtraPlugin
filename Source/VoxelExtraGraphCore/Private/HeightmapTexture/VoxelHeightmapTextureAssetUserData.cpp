@@ -3,6 +3,8 @@
 
 #include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "VoxelMinimal/VoxelMessageManager.h"
+#include "VoxelMinimal/Utilities/VoxelObjectUtilities.h"
 
 UVoxelHeightmapTextureAsset* UVoxelHeightmapTextureAssetUserData::GetAsset(UTexture2D& Texture)
 {
@@ -36,6 +38,7 @@ UVoxelHeightmapTextureAsset* UVoxelHeightmapTextureAssetUserData::GetAsset(UText
 			{
 				Assets.Add(AssetData.GetAsset());
 			}
+			
 			VOXEL_MESSAGE(Warning, "More than 1 texture asset for mesh {0} found: {1}", Texture, Assets);
 		}
 
@@ -73,7 +76,7 @@ UVoxelHeightmapTextureAsset* UVoxelHeightmapTextureAssetUserData::GetAsset(UText
 			PackageName = "/Game/HeightmapTextures/" + Texture.GetName();
 		}
 
-		Asset = FVoxelObjectUtilities::CreateNewAsset_Direct<UVoxelHeightmapTextureAsset>(PackageName, "_HeightmapTexture");
+		Asset = FVoxelUtilities::CreateNewAsset_Direct<UVoxelHeightmapTextureAsset>(PackageName, "_HeightmapTexture");
 
 		if (!Asset)
 		{
@@ -94,7 +97,6 @@ UVoxelHeightmapTextureAsset* UVoxelHeightmapTextureAssetUserData::GetAsset(UText
 	AssetUserData->Asset = Asset;
 
 	Texture.AddAssetUserData(AssetUserData);
-	Texture.MarkPackageDirty();
 
 	return Asset;
 }

@@ -58,8 +58,7 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 {
 	VOXEL_FUNCTION_COUNTER();
 #if WITH_EDITOR
-	const TextureMipGenSettings InitialMipGenSettings = Texture.MipGenSettings;
-	if (InitialMipGenSettings != TextureMipGenSettings::TMGS_NoMipmaps)
+	if (const TextureMipGenSettings InitialMipGenSettings = Texture.MipGenSettings; InitialMipGenSettings != TMGS_NoMipmaps)
 	{
 		return nullptr;
 	}
@@ -68,10 +67,10 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 	const FTexturePlatformData* PlatformData = Texture.GetPlatformData();
 	const FByteBulkData TextureData = PlatformData->Mips[0].BulkData;
 
-	TArray<FFloat16Color> Colors{};
-	TArray<float> ProcessedHeights{};
+	TVoxelArray<FFloat16Color> Colors{};
+	TVoxelArray<float> ProcessedHeights{};
 
-	if (const uint16_t* IntegerImageData = reinterpret_cast<const uint16_t*>(TextureData.LockReadOnly()))
+	if (const uint16_t* IntegerImageData = static_cast<const uint16_t*>(TextureData.LockReadOnly()))
 	{
 		const int32 PixelCount = PlatformData->SizeX * PlatformData->SizeY;
 		ProcessedHeights.SetNumUninitialized(PixelCount);
@@ -89,7 +88,7 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 		}
 		else if (PlatformData->PixelFormat == PF_G16)
 		{
-			const uint16* G16Data = reinterpret_cast<const uint16*>(IntegerImageData);
+			const uint16* G16Data = IntegerImageData;
 
 			for (int32 D = 0; D < PixelCount; ++D)
 			{
@@ -139,8 +138,8 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 
 	if (PlatformData->PixelFormat == PF_G8 || PlatformData->PixelFormat == PF_B8G8R8A8)
 	{
-		ProcessedHeights = FVoxelHeightmapTextureData::ScaleData(ProcessedHeights, 128);
-		ProcessedHeights = FVoxelHeightmapTextureData::BoxBlur(ProcessedHeights, 50);
+		ProcessedHeights = ScaleData(ProcessedHeights, 128);
+		ProcessedHeights = BoxBlur(ProcessedHeights, 50);
 	}
 
 	TextureData.Unlock();
@@ -149,8 +148,7 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 	bool HasNoData = true;
 	for (int32 Index = 0; Index != ProcessedHeights.Num(); ++Index)
 	{
-		int32 Value = ProcessedHeights[Index];
-		if (Value != 0)
+		if (int32 Value = ProcessedHeights[Index]; Value != 0)
 		{
 			HasNoData = false;
 			break;
@@ -175,8 +173,8 @@ TSharedPtr<FVoxelHeightmapTextureData> FVoxelHeightmapTextureData::ReadTexture(c
 	HeightmapTextureData->SizeY = PlatformData->SizeY;
 	HeightmapTextureData->Min = Min;
 	HeightmapTextureData->Max = Max;
-	HeightmapTextureData->Heights = TVoxelArray<float>(ProcessedHeights);
-	HeightmapTextureData->Colors = TVoxelArray<FFloat16Color>(Colors);
+	HeightmapTextureData->Heights = ProcessedHeights;
+	HeightmapTextureData->Colors = Colors;
 
 	return HeightmapTextureData;
 }

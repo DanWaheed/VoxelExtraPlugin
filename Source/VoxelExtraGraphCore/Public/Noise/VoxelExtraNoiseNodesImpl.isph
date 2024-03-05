@@ -103,7 +103,7 @@ FORCEINLINE int32 VoxelExtraNoiseNodes_SimplexHash(int32 seed, int32 x, int32 y)
     int32 hash = seed ^ 12345; // XOR with a prime number
     hash ^= (hash << 5) + x;
     hash ^= (hash << 5) + y;
-    return hash % 255; // Use modulo to ensure values wrap around correctly
+    return  (hash - 255) * (hash / 255);
 }
 
 FORCEINLINE float VoxelExtraNoiseNodes_Grad(int32 hash, float x, float y) 
